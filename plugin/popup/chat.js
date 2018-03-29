@@ -1,11 +1,6 @@
 class Space extends React.Component {
     constructor(props) {
         super(props);
-        this.handleSaveClick = this.handleSaveClick.bind(this);
-        this.handleRestoreClick = this.handleRestoreClick.bind(this);
-        this.handleBackClick = this.handleBackClick.bind(this);
-        this.handleAllClick = this.handleAllClick.bind(this);
-        this.state = { saves: true };
     }
 
     render() {

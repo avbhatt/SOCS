@@ -1,21 +1,27 @@
 {
+
   "manifest_version": 2,
-  "name": "Tab Save/Restore",
-  "description": "Save and restore your tabs at once",
-  "version": "2.1",
-  "applications": {
-    "gecko": {
-      "strict_min_version": "54.0a1",
-      "id": "sealj553@gmail.com"
-    }
+  "name": "WebAccessibilityHelper",
+  "version": "1.0",
+
+  "description": "Adds a red border to all webpages matching mozilla.org.",
+
+  "icons": {
+    "32": "icons/chat-32.ico",
+    "48": "icons/chat-48.ico"
   },
 
-  "permissions": ["storage", "tabs"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.mozilla.org/*"],
+      "js": ["borderify.js"]
+    }
+  ],
 
   "browser_action": {
-    "browser_style": true,
-    "default_icon": "icons/tabs-32.png",
-    "default_title": "Save/Restore",
-    "default_popup": "popup/save_restore.html"
+    "default_icon": "icons/chat-32.ico",
+    "default_title": "Web Accessibility Helper",
+    "default_popup": "popup/chat.html"
   }
+
 }
