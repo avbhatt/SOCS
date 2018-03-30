@@ -1,38 +1,7 @@
-/*html, body {
-  width: 100px;
-}
-
-.button {
-  margin: 3% auto;
-  padding: 4px;
-  text-align: center;
-  font-size: 1.5em;
-  cursor: pointer;
-}
-
-.save:hover {
-  background-color: #CFF2F2;
-}
-
-.save {
- background-color: #E5F2F2;
-}
-
-.restore {
- background-color: #FBFBC9;
-}
-
-.restore:hover {
- background-color: #EAEAC9;
-}*/
-
-/*.wrapper {
-	text-align: center;
-}*/
-
-body { font: 13px Helvetica, Arial; }
-form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-form button { width: 24%; background: #4ee2ed; border: none; padding: 10px; }
+body { font-size: 14px Helvetica, Arial, sans-serif; }
+form input { border: 1px #ddd solid; padding: 10px; width: 90%;}
+form button { width: 24%; background: #4ed2dd; border: none; padding: 10px;  margin-top: 4px;}
+form button:hover, form button:focus { background: #2db2bd; cursor: pointer}
 #messages { list-style-type: none; margin: 0; padding: 0; }
 #messages li { padding: 5px 10px; }
 #messages li:nth-child(odd) { background: #eee; }
