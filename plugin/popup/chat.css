@@ -26,6 +26,13 @@
  background-color: #EAEAC9;
 }*/
 
-.wrapper {
+/*.wrapper {
 	text-align: center;
-}
+}*/
+
+body { font: 13px Helvetica, Arial; }
+form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+form button { width: 24%; background: #4ee2ed; border: none; padding: 10px; }
+#messages { list-style-type: none; margin: 0; padding: 0; }
+#messages li { padding: 5px 10px; }
+#messages li:nth-child(odd) { background: #eee; }
