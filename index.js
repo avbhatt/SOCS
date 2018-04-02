@@ -46,10 +46,14 @@ server.listen(3000, function(){
   console.log('HTTP server listening on *:3000');
 });
 
-app.get('/', function(req, res){
-  res.send('<h1>NODE SERVER</h1>');
+app.get('/img1.png', function(req, res){
+  //res.send('<h1>NODE SERVER</h1>');
+  res.sendFile(__dirname + '/img1.png')
 });
-
+app.get('/', function(req, res){
+  //res.send('<h1>NODE SERVER</h1>');
+  res.sendFile(__dirname + '/index.html')
+});
 io.on('connection', function(socket){
   socket.on('chat message', function(msg){
     console.log('message: ' + msg);
