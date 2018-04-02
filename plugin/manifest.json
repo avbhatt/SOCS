@@ -11,13 +11,6 @@
     "48": "icons/chat-48.ico"
   },
 
-  "content_scripts": [
-    {
-      "matches": ["*://*.mozilla.org/*"],
-      "js": ["borderify.js"]
-    }
-  ],
-
   "browser_action": {
     "default_icon": "icons/chat-32.ico",
     "default_title": "Web Accessibility Helper",
