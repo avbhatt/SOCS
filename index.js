@@ -2,7 +2,6 @@ var express = require('express');
 var cors = require('cors');
 const MongoClient = require('mongodb').MongoClient
 var app = express();
-console.log('server startup'); 
 //var http = require('http').Server(app);
 // var io = require('socket.io')(http);
 
@@ -50,7 +49,7 @@ MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (e
     if (err) {
       return console.log(err);
     }
-    console.log("successful annotations init"); 
+    console.log("successful create entity example"); 
   });
 
 
