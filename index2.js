@@ -7,7 +7,7 @@ const serverPort = 3000
 app.use(cors());
 
 function updateUser(id, type, website) {
-	if (!type){
+	if (type){
 		sites[website].push(id);
 	}
 }
@@ -35,7 +35,7 @@ io.on('connection', function(socket){
 	});
 	// Send init message
 	socket.on('first message', function(data){
-		if (data.type) {//user
+		if (!data.type) {//helper
 			let helperID = getHelper(data.website);
 			io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
 			io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID})
