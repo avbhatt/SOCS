@@ -7,7 +7,7 @@ const serverPort = 3000
 // Enable CORS
 app.use(cors());
 
-var db 
+var db;
 
 MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (err, client) => {
 	if (err) { return console.log(err); }
@@ -22,10 +22,6 @@ MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (e
 	// annotations schema: [{website: string, category: string, text: string}]
 	db.createCollection('annotations', {});
 })
-
-
-users = {}
-sites = {website: []}
 
 // called when a new entity activates the browser extension by clicking a toolbar option ('User', 'Helper')
 function addEntity(id, type, website) {
@@ -106,7 +102,7 @@ io.on('connection', function(socket){
 	// NOTE: do we want to adapt this message for above functions that 
 	// try to detect if a user is waiting for a helper? 
 	socket.on('first message', function(data){
-		if (data.type) {//user
+		if (!data.type) {//helper
 			let helperID = getHelper(data.website);
 			io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
 			io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID})
