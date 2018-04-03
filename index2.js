@@ -80,7 +80,7 @@ function getHelper(website) {
 	var helper_id = idle_helper["id"];
 
 	// update the idle helper to be busy
-	db.collection('active_entities').updateOne({ id: helper_id }, { $set: {is_chatting: true}});
+	db.collection('active_entities').updateOne({ id: helper_id }, { $set: {is_chatting: true}} );
 
 	return helper_id;
 }
@@ -103,6 +103,8 @@ io.on('connection', function(socket){
 		addEntity(data.id, data.type, data.website);
 	});
 	// Send init message
+	// NOTE: do we want to adapt this message for above functions that 
+	// try to detect if a user is waiting for a helper? 
 	socket.on('first message', function(data){
 		if (data.type) {//user
 			let helperID = getHelper(data.website);
@@ -112,7 +114,7 @@ io.on('connection', function(socket){
 	});
 	// Send message
 	socket.on('message', function(data){
-		//add to mongo
+		//add to mongo -- i assume data.callbackID is the recipient of message--how to get sender sock_id?
 		io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.callbackID})
 	});
 
@@ -131,3 +133,5 @@ server.listen(serverPort, function(){
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/index.html')
 });
+
+// TODO: API endpoint to return an object of form [{category: string, texts: [string]}]
