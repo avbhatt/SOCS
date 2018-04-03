@@ -15,7 +15,7 @@ MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (e
 	// store global db object
 	db = client.db('wah_db'); 
 
-	// active_entities schema: [{id: string, entity_type: string, website: string, is_chatting: boolean}]
+	// active_entities schema: [{sock_id: string, entity_type: string, website: string, is_chatting: boolean}]
 	db.createCollection('active_entities', {});
 	// message_logs schema: [{from: id, to: id, message: string, time: date_string}]
 	db.createCollection('message_logs', {});
@@ -27,27 +27,44 @@ MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (e
 users = {}
 sites = {website: []}
 
+// called when a new entity activates the browser extension by clicking a toolbar option ('User', 'Helper')
 function addEntity(id, type, website) {
 	// add entity to mongo active_entities collection
 	var new_entity = {
-		id: id,
+		sock_id: id,
 		entity_type: type,
 		website: website,
 		is_chatting: false
 	}
 
 	db.collection('active_entities').save(new_entity, (err, result) => {
-    if (err) {
-		return console.log(err);
-    }
-    console.log("successful addEntity call"); 
-  });
+	    if (err) {
+			return console.log(err);
+	    }
+	    console.log("successful addEntity call"); 
+	});
+
+	// if this a new helper, check for waiting users who need help
 
 	// if (!type){
 	// 	sites[website].push(id);
 	// }
 }
 
+// called when an entity either changes their role, or changes website
+function updateEntity(id, type, website) {
+	// change an entity in the mongo collection--either website or type could change
+	db.collection('active_entities').updateOne({ sock_id: id }, { $set: {type: type, website: website}});
+
+	// check for waiting user--open a new connection if one exists on this same webpage
+}
+
+// called on extension close
+function removeEntity(id) {
+	db.collection('active_entities').deleteOne({ sock_id: id });	
+}
+
+// called when a user attempts to open a chat 
 function getHelper(website) {
 
 	// TODO (REACH): find way to check to make sure this helper hasn't already failed to help a user with a given problem
