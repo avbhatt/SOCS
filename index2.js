@@ -34,10 +34,10 @@ function addEntity(id, type, website) {
 	}
 
 	db.collection('active_entities').save(new_entity, (err, result) => {
-	    if (err) {
+			if (err) {
 			return console.log(err);
-	    }
-	    console.log("successful addEntity call"); 
+			}
+			console.log("successful addEntity call"); 
 	});
 
 	// if this a new helper, check for waiting users who need help
@@ -67,18 +67,23 @@ function getHelper(website) {
 	// i.e. don't return same helper to user chat 
 
 	// find an idle helper 
-	var idle_helper = db.collection('active_entities').find({
-		website: website, is_chatting: false
-	});
+	var result = db.collection('active_entities').findOne({ website: website, is_chatting: false });
+	console.log(result);
+	return result;
+	// var helper_id = null;
+	// if (idle_helper.hasNext()){
+	// 	var helper = idle_helper.next();
+	// 	console.log(helper)
+	// 	helper_id = helper["id"];
+	// }
+	// console.log(helper_id);
 
-	console.log(idle_helper);
+	// // update the idle helper to be busy
+	// if (!helper_id){
+	// 	db.collection('active_entities').updateOne({ id: helper_id }, { $set: {is_chatting: true}});
+	// }
 
-	var helper_id = idle_helper["id"];
-
-	// update the idle helper to be busy
-	db.collection('active_entities').updateOne({ id: helper_id }, { $set: {is_chatting: true}});
-
-	return helper_id;
+	// return helper_id;
 }
 
 // Socket connection
@@ -95,21 +100,35 @@ io.on('connection', function(socket){
 	console.log('Socket connection established');
 	// Join personalized chat room
 	socket.on('join', function(data){
+		console.log(data.website)
+		console.log(data.id);
 		socket.join(data.id);
 		addEntity(data.id, data.type, data.website);
 	});
 	// Send init message
 	socket.on('first message', function(data){
-		if (!data.type) {//helper
+		if (data.type == "Helper") {//helper
 			let helperID = getHelper(data.website);
 			io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
-			io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID})
+			io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID});
 		}
 	});
 	// Send message
 	socket.on('message', function(data){
 		//add to mongo
-		io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.callbackID})
+		console.log(data.msg)
+		if (!data.callbackID){
+			var helper = getHelper(data.website);
+			helper.then((fulfilled, rejected) => {
+				console.log(fulfilled);
+				console.log(rejected);
+				let helperID = fulfilled.id;
+				io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
+			})
+		}
+		else {
+			io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id});
+		}
 	});
 
 });
