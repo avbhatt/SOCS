@@ -53,7 +53,7 @@ function updateEntityType(sock_id, type) {
 }
 
 // called when an entity changes website
-function updateEntityType(sock_id, website) {
+function updateEntityWebsite(sock_id, website) {
 	// change an entity in the mongo collection--either website or type could change
 	db.collection('active_entities').updateOne({ sock_id: sock_id }, { $set: {website: website}});
 
@@ -66,27 +66,27 @@ function removeEntity(sock_id) {
 }
 
 // called when a user attempts to open a chat 
-function getHelper(website) {
+async function getHelper(website) {
 
 	// TODO (REACH): find way to check to make sure this helper hasn't already failed to help a user with a given problem
 	// i.e. don't return same helper to user chat 
 
 	// find an idle helper 
-	db.collection('active_entities').findOne({ website: website, is_chatting: false, entity_type: "Helper"}).then((data) => {
+	let helper_find_promise = db.collection('active_entities').findOne({ website: website, is_chatting: false, entity_type: "Helper"});
+	let helper_data = await helper_find_promise;
 
-		// there are no idle helpers 
-		if (data === null) {
-			// TODO: how do we want to handle this case?
-			return data; 
-		}
+	// there are no idle helpers 
+	if (helper_data === null) {
+		// TODO: how do we want to handle this case?
+		return null; 
+	}
 
-		var helper_id = data["sock_id"];
+	var helper_id = helper_data["sock_id"];
 
-		// update the idle helper to be in a chat currently
-		db.collection('active_entities').updateOne({ sock_id: helper_id }, { $set: {is_chatting: true}} );
+	// update the idle helper to be in a chat currently
+	db.collection('active_entities').updateOne({ sock_id: helper_id }, { $set: {is_chatting: true}} );
 
-		return helper_id;
-	});
+	return helper_id;
 }
 
 // Socket connection
@@ -119,18 +119,17 @@ io.on('connection', function(socket){
 		}
 	});
 	// Send message
-	socket.on('message', function(data){
-
-		//add to mongo -- i assume data.callbackID is the recipient of message--how to get sender sock_id?
+	socket.on('message', async function(data) {
 		console.log(data.msg)
 		if (!data.callbackID){
-			var helper = getHelper(data.website);
-			helper.then((fulfilled, rejected) => {
-				console.log(fulfilled);
-				console.log(rejected);
-				let helperID = fulfilled.id;
-				io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
-			})
+			var helper_sock_id = await getHelper(data.website);
+			io.to(helper_sock_id).emit('message', {msg: data.msg, callbackID: data.id})
+			// helper.then((fulfilled, rejected) => {
+			// 	console.log(fulfilled);
+			// 	console.log(rejected);
+			// 	let helperID = fulfilled.id;
+			// 	io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
+			// })
 		}
 		else {
 			io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id});
