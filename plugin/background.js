@@ -1,22 +1,37 @@
-var socket = io.connect('http://localhost:3002');
-var type = (browser.storage.local.get("userType")).then();
-if (type == "Helper"){
-	socket.emit('join', {id: socket.id, website: $(location).attr('href'), type: "Helper"});
-}
-else {
-	browser.storage.local.set({"userType": "User", website: $(location).attr('href'), id: socket.id});
-	socket.emit('join', {id: socket.id, website: $(location).attr('href'), type: "Helper"});
-}
+var socket = io('http://localhost:3002');
+socket.on('connect', () => {
+	console.log(socket.id)
+	var userThen = browser.storage.local.get("userType");
+	userThen.then((resolve, reject) => {
+		var type = resolve.userType;
+		console.log(type);
+		browser.tabs.query({active: true, currentWindow: true}, function(arrayOfTabs) {
+			var activeTab = arrayOfTabs[0];
+     		var url = activeTab.url; 
+     		console.log(url);
+			if (type == "Helper"){
+				socket.emit('join', {id: socket.id, website: url, type: "Helper"});
+			}
+			else {
+				browser.storage.local.set({userType: "User"});
+				socket.emit('join', {id: socket.id, website: url, type: "User"});
+			}
+		});
+	});
 
-function websiteUpdate(tabid, changeInfo, tab){
-	var type = (browser.storage.local.get("userType")).then();
-	if (type == "Helper"){
-		socket.emit('join', {id: socket.id, website: tab.url, type: "Helper"});
+	function websiteUpdate(tabid, changeInfo, tab){
+		console.log("CHANGE");
+		browser.storage.local.get("userType").then((resolve, reject) => {
+			var type = resolve.userType;
+			if (type == "Helper"){
+			socket.emit('join', {id: socket.id, website: changeInfo.url, type: "Helper"});
+		}
+		else {
+			browser.storage.local.set({userType: "User"});
+			socket.emit('join', {id: socket.id, website: changeInfo.url, type: "Helper"});
+		}
+		});
+		
 	}
-	else {
-		browser.storage.local.set({"userType": "User", website: $(location).attr('href'), id: socket.id});
-		socket.emit('join', {id: socket.id, tab.url, type: "Helper"});
-	}
-}
-
-browser.tabs.onUpdated.addListener(websiteUpdate)
+	browser.tabs.onUpdated.addListener(websiteUpdate)
+});

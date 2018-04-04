@@ -9,6 +9,7 @@ app.use(cors());
 
 var db;
 
+// server initializes connection to mongoDB
 MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (err, client) => {
 	if (err) { return console.log(err); }
 
@@ -34,30 +35,34 @@ function addEntity(id, type, website) {
 	}
 
 	db.collection('active_entities').save(new_entity, (err, result) => {
-	    if (err) {
+			if (err) {
 			return console.log(err);
-	    }
-	    console.log("successful addEntity call"); 
+			}
+			console.log("successful addEntity call"); 
 	});
 
-	// if this a new helper, check for waiting users who need help
-
-	// if (!type){
-	// 	sites[website].push(id);
-	// }
+	// TODO: check for waiting users on the same webpage 
 }
 
-// called when an entity either changes their role, or changes website
-function updateEntity(id, type, website) {
+// called when an entity changes entity_type
+function updateEntityType(sock_id, type) {
 	// change an entity in the mongo collection--either website or type could change
-	db.collection('active_entities').updateOne({ sock_id: id }, { $set: {type: type, website: website}});
+	db.collection('active_entities').updateOne({ sock_id: sock_id }, { $set: {entity_type: type}});
 
-	// check for waiting user--open a new connection if one exists on this same webpage
+	// TODO: check for waiting users on same webpage
+}
+
+// called when an entity changes website
+function updateEntityType(sock_id, website) {
+	// change an entity in the mongo collection--either website or type could change
+	db.collection('active_entities').updateOne({ sock_id: sock_id }, { $set: {website: website}});
+
+	// TODO: check for waiting users on same webpage
 }
 
 // called on extension close
-function removeEntity(id) {
-	db.collection('active_entities').deleteOne({ sock_id: id });	
+function removeEntity(sock_id) {
+	db.collection('active_entities').deleteOne({ sock_id: sock_id });	
 }
 
 // called when a user attempts to open a chat 
@@ -67,18 +72,21 @@ function getHelper(website) {
 	// i.e. don't return same helper to user chat 
 
 	// find an idle helper 
-	var idle_helper = db.collection('active_entities').find({
-		website: website, is_chatting: false
+	db.collection('active_entities').findOne({ website: website, is_chatting: false, entity_type: "Helper"}).then((data) => {
+
+		// there are no idle helpers 
+		if (data === null) {
+			// TODO: how do we want to handle this case?
+			return data; 
+		}
+
+		var helper_id = data["sock_id"];
+
+		// update the idle helper to be in a chat currently
+		db.collection('active_entities').updateOne({ sock_id: helper_id }, { $set: {is_chatting: true}} );
+
+		return helper_id;
 	});
-
-	console.log(idle_helper);
-
-	var helper_id = idle_helper["id"];
-
-	// update the idle helper to be busy
-	db.collection('active_entities').updateOne({ id: helper_id }, { $set: {is_chatting: true}} );
-
-	return helper_id;
 }
 
 // Socket connection
@@ -95,6 +103,8 @@ io.on('connection', function(socket){
 	console.log('Socket connection established');
 	// Join personalized chat room
 	socket.on('join', function(data){
+		console.log(data.website)
+		console.log(data.id);
 		socket.join(data.id);
 		addEntity(data.id, data.type, data.website);
 	});
@@ -102,18 +112,30 @@ io.on('connection', function(socket){
 	// NOTE: do we want to adapt this message for above functions that 
 	// try to detect if a user is waiting for a helper? 
 	socket.on('first message', function(data){
-		if (!data.type) {//helper
+		if (data.type == "Helper") {//helper
 			let helperID = getHelper(data.website);
 			io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
-			io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID})
+			io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID});
 		}
 	});
 	// Send message
 	socket.on('message', function(data){
-		//add to mongo -- i assume data.callbackID is the recipient of message--how to get sender sock_id?
-		io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.callbackID})
-	});
 
+		//add to mongo -- i assume data.callbackID is the recipient of message--how to get sender sock_id?
+		console.log(data.msg)
+		if (!data.callbackID){
+			var helper = getHelper(data.website);
+			helper.then((fulfilled, rejected) => {
+				console.log(fulfilled);
+				console.log(rejected);
+				let helperID = fulfilled.id;
+				io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
+			})
+		}
+		else {
+			io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id});
+		}
+	});
 });
 
 // Node application
