@@ -9,6 +9,7 @@ socket.on('connect', () => {
 			var activeTab = arrayOfTabs[0];
      		var url = activeTab.url; 
      		console.log(url);
+     		broswer.storage.local.set({tab: url});
 			if (type == "Helper"){
 				socket.emit('join', {id: socket.id, website: url, type: "Helper"});
 			}
@@ -20,7 +21,7 @@ socket.on('connect', () => {
 	});
 
 	function websiteUpdate(tabid, changeInfo, tab){
-		console.log("CHANGE");
+		broswer.storage.local.set({tab: changeInfo.url});
 		browser.storage.local.get("userType").then((resolve, reject) => {
 			var type = resolve.userType;
 			if (type == "Helper"){
