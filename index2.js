@@ -1,13 +1,15 @@
 var express = require('express');
 var cors = require('cors');
 const MongoClient = require('mongodb').MongoClient
-var app = express();
 const socketPort = 3002
 const serverPort = 3000
+var app = express();
 // Enable CORS
 app.use(cors());
 
 var db;
+var socketServer;
+var io;
 
 // server initializes connection to mongoDB
 MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (err, client) => {
@@ -22,6 +24,10 @@ MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (e
 	db.createCollection('message_logs', {});
 	// annotations schema: [{website: string, category: string, text: string}]
 	db.createCollection('annotations', {});
+
+	console.log("successful connection to Mongo DB");
+	console.log("opening connection to socketServer");
+	init_socket_server();
 })
 
 // called when a new entity activates the browser extension by clicking a toolbar option ('User', 'Helper')
@@ -72,18 +78,17 @@ async function getHelper(website) {
 	// i.e. don't return same helper to user chat 
 
 	// find an idle helper 
-	let helper_find_promise = db.collection('active_entities').findOne({ website: website, is_chatting: false, entity_type: "Helper"});
-	let helper_data = await helper_find_promise;
+	var helper_find_promise = db.collection('active_entities').findOne({ website: website, is_chatting: false, entity_type: "Helper"});
+	var helper_data = await helper_find_promise;
 
 	// there are no idle helpers 
 	if (helper_data === null) {
+		console.log("no idle helpers on same website");
 		// TODO: how do we want to handle this case?
 		return null; 
 	}
 
 	var helper_id = helper_data["sock_id"];
-	console.log("Please Work");
-	console.log(helper_id);
 
 	// update the idle helper to be in a chat currently
 	db.collection('active_entities').updateOne({ sock_id: helper_id }, { $set: {is_chatting: true}} );
@@ -93,47 +98,50 @@ async function getHelper(website) {
 
 // Socket connection
 // Creates new socket server for socket
-var socketServer = require('http').createServer(app);
-var io = require('socket.io')(socketServer);
+function init_socket_server() {
+	socketServer = require('http').createServer(app);
+	io = require('socket.io')(socketServer);
 
-// Listen for socket connection on port 3002
-socketServer.listen(socketPort, function(){
-	console.log('Socket server listening on *:3002');
-});
+	// Listen for socket connection on port 3002
+	socketServer.listen(socketPort, function(){
+		console.log('Socket server listening on *:3002');
+	});
 
-io.on('connection', function(socket){
-	console.log('Socket connection established');
-	// Join personalized chat room
-	socket.on('join', function(data){
-		console.log(data.website)
-		console.log(data.id);
-		socket.join(data.id);
-		addEntity(data.id, data.type, data.website);
+	io.on('connection', function(socket){
+		console.log('Socket connection established');
+		// Join personalized chat room
+		socket.on('join', function(data){
+			console.log(data.website)
+			console.log(data.id);
+			socket.join(data.id);
+			addEntity(data.id, data.type, data.website);
+		});
+		// Send init message
+		socket.on('first message', async function(data){
+			if (data.type == "Helper") {//helper
+				console.log(data.website);
+				var helper_id = await getHelper("https://www.yahoo.com/");
+				console.log(helper_id); 
+				io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
+				io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID});
+			}
+		});
+		// Send message
+		socket.on('message', async function(data) {
+			console.log(data.msg)
+			if (!data.callbackID){
+				console.log("First Message");
+				console.log(data.website);
+				var helper_id = await getHelper("https://www.yahoo.com/")
+				console.log(helper_id);
+				io.to(helper_id).emit('message', {msg: data.msg, callbackID: data.id})					
+			}
+			else {
+				io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id});
+			}
+		});
 	});
-	// Send init message
-	// NOTE: do we want to adapt this message for above functions that 
-	// try to detect if a user is waiting for a helper? 
-	socket.on('first message', function(data){
-		if (data.type == "Helper") {//helper
-			let helperID = getHelper(data.website);
-			io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
-			io.to(data.id).emit('message', {msg: data.msg, callbackID: helperID});
-		}
-	});
-	// Send message
-	socket.on('message', async function(data) {
-		console.log(data.msg)
-		if (!data.callbackID){
-			console.log("First Message");
-			var helper_sock_id = await getHelper(data.website);
-			console.log(helper_sock_id);
-			io.to(helper_sock_id).emit('message', {msg: data.msg, callbackID: data.id})
-		}
-		else {
-			io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id});
-		}
-	});
-});
+}
 
 // Node application
 
