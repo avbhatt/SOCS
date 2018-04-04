@@ -82,6 +82,8 @@ async function getHelper(website) {
 	}
 
 	var helper_id = helper_data["sock_id"];
+	console.log("Please Work");
+	console.log(helper_id);
 
 	// update the idle helper to be in a chat currently
 	db.collection('active_entities').updateOne({ sock_id: helper_id }, { $set: {is_chatting: true}} );
@@ -122,14 +124,10 @@ io.on('connection', function(socket){
 	socket.on('message', async function(data) {
 		console.log(data.msg)
 		if (!data.callbackID){
+			console.log("First Message");
 			var helper_sock_id = await getHelper(data.website);
+			console.log(helper_sock_id);
 			io.to(helper_sock_id).emit('message', {msg: data.msg, callbackID: data.id})
-			// helper.then((fulfilled, rejected) => {
-			// 	console.log(fulfilled);
-			// 	console.log(rejected);
-			// 	let helperID = fulfilled.id;
-			// 	io.to(helperID).emit('message', {msg: data.msg, callbackID: data.id});
-			// })
 		}
 		else {
 			io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id});
