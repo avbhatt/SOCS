@@ -7,19 +7,34 @@
   <body>
     <ul id="messages"></ul>
     <form action="">
-      <input id="m" autocomplete="off" placeholder="Send a message"/><button>Send</button>
+      <input id="m" autocomplete="off" aria-label="Type a message" placeholder="Type a message"/>
+      <button>Send message</button>
     </form>
     <div id="annotation-wrapper">
-      <button id="img-header" class="collapsible">Open Collapsible</button>
-      <div class="content">
-        <ol>
+      <h2>Annotations for this page</h2>
 
-        </ol>
+      <button id="img" class="collapsible" style="display:none">Image Annotations</button>
+      <div class="content">
+        <ul>
+
+        </ul>
+      </div>
+      <button id="vid" class="collapsible" style="display:none">Video Annotations</button>
+      <div class="content">
+        <ul>
+
+        </ul>
+      </div>
+      <button id="keyb" class="collapsible" style="display:none">Keyboard Annotations</button>
+      <div class="content">
+        <ul>
+
+        </ul>
       </div>
     </div>
   </body>
   <script src="../jquery-3.3.1.js"></script>
   <script src="../socket.io.js"></script>
-  <script src="chat.js"></script>
   <script src="annotation-list.js"></script>
+  <script src="chat.js"></script>
 </html>
