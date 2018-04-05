@@ -23,13 +23,16 @@ $(function() {
   tempResponse.forEach(function(elem) {
     var annotationItem = $("<li></li>").text(elem.content[0].text);
 
-    
+    if (elem.category == "image") {
+
+    } else if (elem.category == "video") {
+
+    } else if (elem.category == "keyboard") {
+
+    }
 
 
   });
-
-
-  $('#annotation-wrapper').append()
 
   // when user votes, update number to be saved in db, but don't necessarily propagate update across everything
 

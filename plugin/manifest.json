@@ -21,12 +21,12 @@
     "default_icon": "icons/chat-32.ico",
     "default_title": "Web Accessibility Helper",
     "default_popup": "popup/options.html"
-  }, 
+  },
 
   "sidebar_action": {
     "default_icon": "icons/chat-48.ico",
     "default_title": "Web Accessibility Chat",
-    "default_panel": "sidebar/chat.html"
+    "default_panel": "sidebar/sidebar.html"
   }
 
 }
