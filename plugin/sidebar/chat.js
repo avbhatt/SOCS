@@ -12,16 +12,19 @@ $(function (){
 				var website = fulfilled.tab;
 				$('form').submit(function(){
 					if (recData.callbackID){
+						console.log("CALLBACK")
 						socket.emit('message', {id: socket.id, website: website, type: user, msg: $('#m').val(), callbackID: recData.callbackID})
 					}
 					else {
+						console.log(website)
 						socket.emit('message', {id: socket.id, website: website, type: user, msg: $('#m').val(), callbackID: null});
 					}
 					$('#m').val('');
 					return false;
 				});
 				socket.on('message', function(data){
-					console.log("RECEIVED")
+					console.log("RECEIVED");
+					console.log(data.msg);
 					$('#messages').append($('<li>').text(data.msg));
 					recData.callbackID = data.callbackID;
 				});

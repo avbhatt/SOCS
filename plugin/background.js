@@ -9,7 +9,7 @@ socket.on('connect', () => {
 			var activeTab = arrayOfTabs[0];
      		var url = activeTab.url; 
      		console.log(url);
-     		broswer.storage.local.set({tab: url});
+     		browser.storage.local.set({tab: url});
 			if (type == "Helper"){
 				socket.emit('join', {id: socket.id, website: url, type: "Helper"});
 			}
@@ -21,18 +21,34 @@ socket.on('connect', () => {
 	});
 
 	function websiteUpdate(tabid, changeInfo, tab){
-		broswer.storage.local.set({tab: changeInfo.url});
+		console.log("ChangeWebsite");
+		console.log("TAB");
+		console.log(tab.url)
+		browser.storage.local.set({tab: tab.url});
 		browser.storage.local.get("userType").then((resolve, reject) => {
-			var type = resolve.userType;
-			if (type == "Helper"){
-			socket.emit('join', {id: socket.id, website: changeInfo.url, type: "Helper"});
-		}
-		else {
-			browser.storage.local.set({userType: "User"});
-			socket.emit('join', {id: socket.id, website: changeInfo.url, type: "Helper"});
-		}
+			if (socket.id && tab.url) {
+				console.log("BG 27: " + socket.id);
+				socket.emit('leave', {id: socket.id, website: tab.url, type: "Helper"});
+				var type = resolve.userType;
+				if (type == "Helper"){
+					socket.emit('join', {id: socket.id, website: tab.url, type: "Helper"});
+				}
+				else {
+					browser.storage.local.set({userType: "User"});
+					socket.emit('join', {id: socket.id, website: tab.url, type: "User"});
+				}
+			}
 		});
-		
 	}
-	browser.tabs.onUpdated.addListener(websiteUpdate)
+
+	function typeUpdate(changes, areaName){
+		if (areaName == "local"){
+			if (changes.tab) {
+
+			}
+		}
+	}
+
+	browser.storage.onChanged.addListener(typeUpdate);
+	browser.tabs.onUpdated.addListener(websiteUpdate);
 });
