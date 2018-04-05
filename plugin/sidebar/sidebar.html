@@ -2,17 +2,26 @@
 <html>
   <head>
     <title>Socket.IO chat</title>
-    <link rel="stylesheet" href="chat.css">
+    <link rel="stylesheet" href="sidebar.css">
   </head>
   <body>
     <ul id="messages"></ul>
     <form action="">
       <input id="m" autocomplete="off" placeholder="Send a message"/><button>Send</button>
     </form>
+    <div id="annotation-wrapper">
+      <button id="img-header" class="collapsible">Open Collapsible</button>
+      <div class="content">
+        <ol>
+
+        </ol>
+      </div>
+    </div>
   </body>
   <script src="../jquery-3.3.1.js"></script>
   <script src="../socket.io.js"></script>
   <script src="../react.js"></script>
   <script src="../react-dom.js"></script>
   <script src="chat.js"></script>
+  <script src="annotation-list.js"></script>
 </html>
