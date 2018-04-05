@@ -7,8 +7,23 @@ window.addEventListener("mousedown", function(event){
     }
 }, true);
 
+browser.contextMenus.onClicked.addListener(() => {
+  console.log("HERE");
+  browser.browserAction.openPopup();
+});
+
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if(request == "get_clicked_element") {
-        sendResponse({tag: clicked_element.tagName, value: clicked_element.innerHTML});
+      tag = clicked_element.tagName
+      switch (tag) {
+        case "IMG":
+          sendResponse({tag: tag, src: clicked_element.src});
+          break;
+        case "INPUT":
+          sendResponse({tag: tag, name: clicked_element.name});
+          break;
+        default:
+          sendResponse({tag: tag, value: clicked_element.innerHTML});
+      }
     }
 });
