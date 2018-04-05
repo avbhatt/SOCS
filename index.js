@@ -148,26 +148,41 @@ function init_http_server() {
 		res.sendFile(__dirname + '/index.html')
 	});
 
-  app.get('/getAnnotations', async function(req, res){
-    var website = req.query.website;
-    var ann_obj = await getWebsiteAnnotations(website); 
+  app.get('/getAnnotations', async function(req, res) {
+    console.log("received getEntityInfo request for website: ");
+    console.log(req.query.website);
+    var ann_obj = await getWebsiteAnnotations(req.query.website); 
     res.send(ann_obj);
+    console.log("serviced getAnnotations request with response: ");
+    console.log(ann_obj);
   });
 
   // give socket_id, get entity_type and website
-  app.get('/getEntityInfo', async function(req, res){
-    var socket_id = req.query.socket_id;
-    var entity_info = await getEntityInfo(socket_id); 
+  app.get('/getEntityInfo', async function(req, res) {
+    console.log("received getEntityInfo request with socket_id: ");
+    console.log(req.query.socket_id);
+    var entity_info = await getEntityInfo(req.query.socket_id); 
     res.send(entity_info);
+    console.log("serviced getEntityInfo request with response: ");
+    console.log(entity_info);
   });
 
   app.post('/postAnnotation', function(req, res) {
+    console.log("received postAnnotation request with body: ");
+    console.log(req.body);
     var ann_json = req.body;
-
     // not sure if this is necessary--depends on if json object is essentially same as dict
     var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], upvotes: 0, downvotes: 0};
     storeData("annotations", annotation_dict);
+    console.log("serviced postAnnotation request");
   });
+
+  app.post('/updateEntityType', function(req, res) {
+    console.log("received updateEntityType request with body: ");
+    console.log(req.body);
+    updateEntityType(req.body.socket_id, req.body.entity_type);
+    console.log("serviced updateEntityType request");
+  } 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
