@@ -157,6 +157,16 @@ function init_http_server() {
     console.log(ann_obj);
   });
 
+  app.post('/postAnnotation', function(req, res) {
+    console.log("received postAnnotation request with body: ");
+    console.log(req.body);
+    var ann_json = req.body;
+    // not sure if this is necessary--depends on if json object is essentially same as dict
+    var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], upvotes: 0, downvotes: 0};
+    storeData("annotations", annotation_dict);
+    console.log("serviced postAnnotation request");
+  });
+  
   // give socket_id, get entity_type and website
   app.get('/getEntityInfo', async function(req, res) {
     console.log("received getEntityInfo request with socket_id: ");
@@ -167,15 +177,6 @@ function init_http_server() {
     console.log(entity_info);
   });
 
-  app.post('/postAnnotation', function(req, res) {
-    console.log("received postAnnotation request with body: ");
-    console.log(req.body);
-    var ann_json = req.body;
-    // not sure if this is necessary--depends on if json object is essentially same as dict
-    var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], upvotes: 0, downvotes: 0};
-    storeData("annotations", annotation_dict);
-    console.log("serviced postAnnotation request");
-  });
 
   app.post('/updateEntityType', function(req, res) {
     console.log("received updateEntityType request with body: ");
