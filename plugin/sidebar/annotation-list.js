@@ -1,5 +1,5 @@
 //var currentUrl = window.location.href;
-var currentUrl = "https://en.wikipedia.org/wiki/Static_web_page";
+var currentUrl = "fuzzyporgs.com";
 // tempResponse is just placeholder data
 
 
@@ -45,25 +45,33 @@ $(function () {
   // call getWebsitesAnnotations(currentUrl)
   // route: /getAnnotations
 
-  // $.get("[????]/getAnnotations?website=" + currentUrl, function (data) {
-  //
-  //   tempResponse = data;
-  // });
-  tempResponse.forEach(function(elem) {
-    if (elem.category == "image") {
-      $('#img').css("display", "block")
-      var $ul = createList(elem.texts);
-      $("#img").next().append($ul);
-    } else if (elem.category == "video") {
-      $('#vid').css("display", "block")
-      var $ul = createList(elem.texts);
-      $("#vid").next().append($ul);
-    } else if (elem.category == "keyboard") {
-      $('#keyb').css("display", "block")
-      var $ul = createList(elem.texts);
-      $("#keyb").next().append($ul);
-    }
-  });
+
+
+  // this doesnt work idk why tho
+  $.get("localhost:3000/getAnnotations", {website: currentUrl})
+    .done(function(data){
+      tempResponse = JSON.parse(data).content;
+      console.log(tempResponse);
+      tempResponse.forEach(function(elem) {
+        if (elem.category == "image") {
+          $('#img').css("display", "block")
+          var $ul = createList(elem.texts);
+          $("#img").next().append($ul);
+        } else if (elem.category == "video") {
+          $('#vid').css("display", "block")
+          var $ul = createList(elem.texts);
+          $("#vid").next().append($ul);
+        } else if (elem.category == "keyboard") {
+          $('#keyb').css("display", "block")
+          var $ul = createList(elem.texts);
+          $("#keyb").next().append($ul);
+        }
+      });
+
+
+
+    });
+
 
   // when user votes, update number to be saved in db, but don't necessarily propagate update across everything
 
