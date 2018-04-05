@@ -1,6 +1,13 @@
 # EECS498 Social Computing Final Project
 Web Accessibility Helper
 
+## Setup (for testing)
+1. Clone the entire repository
+2. Select the `manifest.json` file within the `plugin` folder as your source for testing Chrome extensions, or any file within the `plugin` folder for testing with Firefox add-ons (about:debugging). This should immediately open the side panel and also include an icon in the top of your browser that looks like two speech bubbles.
+3. To set up the npm dependencies, type `npm install` from the root directory
+4. Then, to set up the node server to test the chat functionality, type `node index.js` from the root directory as well
+
+
 ## Resources
 [Examples of webextensions](https://github.com/mdn/webextensions-examples)
 
@@ -13,7 +20,3 @@ Web Accessibility Helper
 - Username: ianphilm
 - Password: socs123
 - URI: [mongodb://server:wah123@ds127044.mlab.com:27044/wah_db](https://mlab.com/databases/wah_db/collections/)
-
-## Solutions
-[Scrolling element into view?](https://www.w3schools.com/Jsref/met_element_scrollintoview.asp)
-- weird behavior with horizontal, but otherwise moves top of element to top of parent (or viewport?)
