@@ -161,12 +161,11 @@ function init_http_server() {
     console.log("received postAnnotation request with body: ");
     console.log(req.body);
     var ann_json = req.body;
-    // not sure if this is necessary--depends on if json object is essentially same as dict
     var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], upvotes: 0, downvotes: 0};
     storeData("annotations", annotation_dict);
     console.log("serviced postAnnotation request");
   });
-  
+
   // give socket_id, get entity_type and website
   app.get('/getEntityInfo', async function(req, res) {
     console.log("received getEntityInfo request with socket_id: ");
@@ -194,7 +193,7 @@ function init_http_server() {
 
 function storeData(collection_name, document_dict) {
 	console.log("STORE START");
-	db.collection('active_entities').findOne(document_dict, (err, result) => {
+	db.collection(collection_name).findOne(document_dict, (err, result) => {
 		if (err) { return console.log(err); }
 		console.log("FIND START")
 		console.log(result);
