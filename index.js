@@ -1,6 +1,8 @@
 var express = require('express');
 var cors = require('cors');
+const MongoClient = require('mongodb').MongoClient
 var app = express();
+console.log('server startup'); 
 //var http = require('http').Server(app);
 // var io = require('socket.io')(http);
 
@@ -23,6 +25,40 @@ var app = express();
 //   });
 // });
 
+var db 
+
+MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', (err, client) => {
+  if (err) {
+    return console.log(err);
+  }
+
+  // store global db object
+  db = client.db('wah_db'); 
+
+  // initialize collections ? 
+  db.createCollection('active_entities', {});
+  db.createCollection('message_logs', {});
+  db.createCollection('annotations', {});
+
+  // example of how to save something 
+  test_entity = {
+    entity_type : "user",
+    curr_url : "askJeeves.com",
+    is_chatting : false
+  };
+  db.collection('active_entities').save(test_entity, (err, result) => {
+    if (err) {
+      return console.log(err);
+    }
+    console.log("successful annotations init"); 
+  });
+
+
+  app.listen(3000, () => {
+    console.log("listening on 3000");
+  })
+
+})
 
 // Enable CORS
 app.use(cors());
@@ -30,39 +66,39 @@ app.use(cors());
 // Socket connection
 // Creates new socket server for socket */
 var socketServer = require('http').createServer(app);
-var io = require('socket.io')(socketServer);
-// Listen for socket connection on port 3002 */
-socketServer.listen(3002, function(){
-  console.log('Socket server listening on *:3002');
-});
-// This event will emit when client connects to the socket server
-io.on('connection', function(socket){
-  console.log('Socket connection established');
-});
-// Create HTTP server for node application */
-var server = require('http').Server(app);
-// Node application will be running on 3000 port */
-server.listen(3000, function(){
-  console.log('HTTP server listening on *:3000');
-});
+// var io = require('socket.io')(socketServer);
+// // Listen for socket connection on port 3002 */
+// socketServer.listen(3002, function(){
+//   console.log('Socket server listening on *:3002');
+// });
+// // This event will emit when client connects to the socket server
+// io.on('connection', function(socket){
+//   console.log('Socket connection established');
+// });
+// // Create HTTP server for node application */
+// var server = require('http').Server(app);
+// // Node application will be running on 3000 port */
+// server.listen(3000, function(){
+//   console.log('HTTP server listening on *:3000');
+// });
 
-app.get('/img1.png', function(req, res){
-  //res.send('<h1>NODE SERVER</h1>');
-  res.sendFile(__dirname + '/img1.png')
-});
-app.get('/', function(req, res){
-  //res.send('<h1>NODE SERVER</h1>');
-  res.sendFile(__dirname + '/index.html')
-});
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    console.log('message: ' + msg);
-  });
-});
+// app.get('/img1.png', function(req, res){
+//   //res.send('<h1>NODE SERVER</h1>');
+//   res.sendFile(__dirname + '/img1.png')
+// });
+// app.get('/', function(req, res){
+//   //res.send('<h1>NODE SERVER</h1>');
+//   res.sendFile(__dirname + '/index.html')
+// });
+// io.on('connection', function(socket){
+//   socket.on('chat message', function(msg){
+//     console.log('message: ' + msg);
+//   });
+// });
 
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-});
-    
+// io.on('connection', function(socket){
+//   socket.on('chat message', function(msg){
+//     io.emit('chat message', msg);
+//   });
+// });
+//     
