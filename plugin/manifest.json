@@ -14,19 +14,30 @@
   "permissions": ["storage", "tabs"],
 
   "background": {
-    "scripts": ["jquery-3.3.1.js","socket.io.js","background.js"]
+    "scripts": ["jquery-3.3.1.js","socket.io.js","background.js", "menu-background-script.js"]
   },
 
   "browser_action": {
     "default_icon": "icons/chat-32.ico",
     "default_title": "Web Accessibility Helper",
     "default_popup": "popup/options.html"
-  }, 
+  },
 
   "sidebar_action": {
     "default_icon": "icons/chat-48.ico",
     "default_title": "Web Accessibility Chat",
     "default_panel": "sidebar/chat.html"
-  }
+  },
+
+  "content_scripts": [
+    {
+      "matches":["<all_urls>"],
+      "js":["menu-content-script.js"]
+    }
+  ],
+
+  "permissions": [
+    "contextMenus"
+  ]
 
 }
