@@ -1,13 +1,9 @@
-//var currentUrl = window.location.href;
-var currentUrl = "fuzzyporgs.com";
-// tempResponse is just placeholder data
-
+var currentUrl = window.location.href;
 
 // notes:
 //    category: one of "image", "video", or "keyboard"
 //
 // var tempResponse = [{"category":"image","texts":[{"text":"do what want","ups":100,"downs":13},{"text":"click there and wut","ups":8,"downs":7},{"text":"click there and here","ups":4,"downs":9},{"text":"click there and here","ups":2,"downs":72}]},{"category":"video","texts":[{"text":"click there and here","ups":22,"downs":7},{"text":"click there and here","ups":9,"downs":4}]},{"category":"keyboard","texts":[{"text":"click there and can't","ups":3,"downs":2},{"text":"please click now","ups":1,"downs":2},{"text":"ok not there though","ups":34,"downs":73}]}];
-
 
 var coll = document.getElementsByClassName("collapsible");
 var i;
@@ -35,23 +31,21 @@ function createList (texts) {
     $annotationItem.append($("<a href='#'>" + content.downs + "[downvote]</a>"));
     $temp_ul.append($annotationItem);
   })
-
   return $temp_ul
-
 }
 
-// Renders an
+// Renders the completed annotations list for this webpage
 $(function () {
-  // call getWebsitesAnnotations(currentUrl)
-  // route: /getAnnotations
-
-
-
-  // this doesnt work idk why tho
-  $.get("localhost:3000/getAnnotations", {website: currentUrl})
-    .done(function(data){
-      tempResponse = JSON.parse(data).content;
+  $.ajax({
+    url: "http://localhost:3000/getAnnotations",
+    data: {website: currentUrl},
+    dataType: "json",
+    async: false,
+    success: function(data) {
+      console.log(data); 
+      var tempResponse = data.content;
       console.log(tempResponse);
+      console.log(tempResponse[0])
       tempResponse.forEach(function(elem) {
         if (elem.category == "image") {
           $('#img').css("display", "block")
@@ -67,11 +61,12 @@ $(function () {
           $("#keyb").next().append($ul);
         }
       });
-
-
-
-    });
-
+    },
+    error: (error) => {
+      console.log("failed to make ajax call");
+      console.log(error);
+    }
+  });
 
   // when user votes, update number to be saved in db, but don't necessarily propagate update across everything
 

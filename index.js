@@ -361,4 +361,3 @@ async function getWebsiteAnnotations(website) {
 
 // YYYY:MM:DD:HH:MM:SS
 function get_date() { return (new Date()).toJSON().slice(0, 19).replace(/[-T]/g, ':');}
->>>>>>> aced117c059513562f7ce9ef9c7cf9224f95aebd
