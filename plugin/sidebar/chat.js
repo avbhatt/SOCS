@@ -1,12 +1,35 @@
 $(function (){
-  // connect to socket.io
-	var socket = io.connect('http://localhost:3002');
-	$('form').submit(function(){
-		socket.emit('chat message', $('#m').val());
-		$('#m').val('');
-		return false;
-	});
-	socket.on('chat message', function(msg){
-		$('#messages').append($('<li>').text(msg));
+	var background = browser.runtime.getBackgroundPage();
+	background.then((fulfilled, rejected) => {
+		var socket = fulfilled.socket;
+		// connect to local storage to get type, default to user
+		var userThen = browser.storage.local.get("userType");
+		userThen.then((fulfilled, rejected) => {
+			var user = fulfilled.userType;
+			var recData = {};
+			var websiteThen = browser.storage.local.get("tab");
+			websiteThen.then((fulfilled, rejected) => {
+				var website = fulfilled.tab;
+				$('form').submit(function(){
+					if (recData.callbackID){
+						console.log("CALLBACK")
+						socket.emit('message', {id: socket.id, website: website, type: user, msg: $('#m').val(), callbackID: recData.callbackID})
+					}
+					else {
+						console.log(website)
+						socket.emit('message', {id: socket.id, website: website, type: user, msg: $('#m').val(), callbackID: null});
+					}
+					$('#m').val('');
+					return false;
+				});
+				socket.on('message', function(data){
+					console.log("RECEIVED");
+					console.log(data.msg);
+					$('#messages').append($('<li>').text(data.msg));
+					recData.callbackID = data.callbackID;
+				});
+			});
+		});
 	});
 });
+

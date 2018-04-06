@@ -1,29 +1,28 @@
-var clicked_element = null;
+var url = window.location.href;
 
 window.addEventListener("mousedown", function(event){
     //right click
     if(event.button == 2) {
-        clicked_element = event.target;
+        clicked = event.target;
     }
 }, true);
 
-browser.contextMenus.onClicked.addListener(() => {
-  console.log("HERE");
-  browser.browserAction.openPopup();
-});
-
 browser.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if(request == "get_clicked_element") {
-      tag = clicked_element.tagName
-      switch (tag) {
-        case "IMG":
-          sendResponse({tag: tag, src: clicked_element.src});
-          break;
-        case "INPUT":
-          sendResponse({tag: tag, name: clicked_element.name});
-          break;
-        default:
-          sendResponse({tag: tag, value: clicked_element.innerHTML});
-      }
-    }
+  if (request == "get_url") {
+    sendResponse({url: url})
+  }
+  // Getting the html element
+  // if(request == "get_url") {
+  //   tag = clicked.tagName
+  //   switch (tag) {
+  //     case "IMG":
+  //       sendResponse({tag: tag, src: clicked.src});
+  //       break;
+  //     case "INPUT":
+  //       sendResponse({tag: tag, name: clicked.name});
+  //       break;
+  //     default:
+  //       sendResponse({tag: tag, value: clicked.innerHTML});
+  //   }
+  // }
 });

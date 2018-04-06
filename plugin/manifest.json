@@ -11,14 +11,22 @@
     "48": "icons/chat-48.ico"
   },
 
+  "permissions": ["storage", "tabs"],
+
+  "background": {
+    "scripts": ["jquery-3.3.1.js","socket.io.js","background.js", "menu-background-script.js"]
+  },
+
   "browser_action": {
     "default_icon": "icons/chat-32.ico",
     "default_title": "Web Accessibility Helper",
-    "default_popup": "popup/chat.html"
+    "default_popup": "popup/options.html"
   },
 
-  "background": {
-    "scripts": ["menu-background-script.js"]
+  "sidebar_action": {
+    "default_icon": "icons/chat-48.ico",
+    "default_title": "Web Accessibility Chat",
+    "default_panel": "sidebar/chat.html"
   },
 
   "content_scripts": [

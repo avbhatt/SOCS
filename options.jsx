@@ -8,6 +8,8 @@ class ToolbarItem extends React.Component {
     }
 
     handleUserTypeSelection(event) {
+      console.log(event.target.value);
+      browser.storage.local.set({userType: event.target.value});
       this.setState({user_type : event.target.value})
     }
 
