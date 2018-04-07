@@ -1,5 +1,5 @@
 var currentUrl = window.location.href;
-
+currentUrl = "fuzzyporgs.com"
 // notes:
 //    category: one of "image", "video", or "keyboard"
 //
