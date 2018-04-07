@@ -1,16 +1,14 @@
 ///////////////////////////////////////////////////////////////////////////////
-///////////////// server startup + mongo query functions //////////////////////
+/////////////////////// server init + mongo functions /////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 const MongoClient = require('mongodb').MongoClient
-var socket_functions;
-var api_functions;
+var express_startup;
 var db;
-
 
 module.exports = {  
   // server code initializes by making connection to mongo 
   // and initializing socket and server info after connection
-  server_and_db_init: () => {
+  server_init: () => {
     MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', async (err, client) => {
       if (err) { return console.log(err); }
 
@@ -25,12 +23,11 @@ module.exports = {
       db.createCollection('annotations', {});
       console.log("successful connection to Mongo DB");
 
-      socket_functions = require('./socket');
-      socket_functions.init_socket_server();
+      express_startup = require('./express');
+      express_startup.init_socket_server();
       console.log("successful Socket.IO init");
 
-      api_functions = require('./api');
-      api_functions.init_http_server(); 
+      express_startup.init_http_server(); 
       console.log("successful http server init"); 
     })
   },

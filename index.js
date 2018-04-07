@@ -1,4 +1,4 @@
-// start on mongo.js file because need to establish 
-// db connection before spinning up socket and api servers
+// start on mongo.js file because server needs to establish 
+// db connection before spinning up socket and api connections
 var mongo = require('./mongo');
-mongo.server_and_db_init(); 
+mongo.server_init(); 
