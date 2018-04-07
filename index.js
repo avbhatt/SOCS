@@ -87,15 +87,15 @@ function init_socket_server() {
 				// store msg in db? 
 				new_msg = { to: helper_id, from: data.id, message: data.msg, time: get_date() };
 				storeData("message_logs", new_msg);
-				io.to(helper_id).emit('message', {msg: data.msg, callbackID: data.id});
-				io.to(data.id).emit('message', {msg: data.msg, callbackID: helper_id});				
+				io.to(helper_id).emit('message', {msg: data.msg, callbackID: data.id, type: data.type});
+				io.to(data.id).emit('message', {msg: data.msg, callbackID: helper_id, type: data.type});				
 			}
 			else {
 				// store msg in db? 
 				new_msg = { to: data.callbackID, from: data.id, message: data.msg, time: get_date() };
 				storeData("message_logs", new_msg);
-				io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id});
-				io.to(data.id).emit('message', {msg: data.msg, callbackID: data.callbackID});
+				io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id, type: data.type});
+				io.to(data.id).emit('message', {msg: data.msg, callbackID: data.callbackID, type: data.type});
 			}
 			console.log("MESSAGE END")
 		});
