@@ -51,6 +51,15 @@ module.exports = {
   	});
   },
 
+  storeDataSimple: (collection_name, document_dict) => {
+    console.log("SIMPLE STORE")
+    db.collection(collection_name).save(document_dict, (err, result) => {
+      if (err) { return console.log(err);}
+      console.log("successful storeData call on collection: " + collection_name + " with userID: " + result.ops[0].sock_id); 
+      console.log("SIMPLE STORE END");
+    });
+  },
+
   // used to delete documents matching the query fields in the collection
   // NOTE: if want to delete entire collection, call delete with empty find_dict
   deleteData: (collection_name, query_fields) => {
@@ -64,8 +73,9 @@ module.exports = {
 
   // called when an entity changes entity_type
   updateEntityType: (socket_id, type) => {
+    console.log("in mongo.js updateEntityType call with socket_id: " + socket_id + "and type: " + type);
   	// change an entity in the mongo collection--either website or type could change
-  	db.collection('active_entities').updateOne({ socket_id: socket_id }, { $set: {entity_type: type}});
+  	db.collection('active_entities').updateOne({ sock_id: socket_id }, { $set: {entity_type: type}});
 
   	// TODO: check for waiting users on same webpage
   },
@@ -73,13 +83,14 @@ module.exports = {
   // called when an entity changes website
   updateEntityWebsite: (socket_id, website) => {
   	// change an entity in the mongo collection--either website or type could change
-  	db.collection('active_entities').updateOne({ socket_id: socket_id }, { $set: {website: website}});
+    console.log("in mongo.js updateEntityType call with socket_id: " + socket_id + "and website: " + website);
+  	db.collection('active_entities').updateOne({ sock_id: socket_id }, { $set: {website: website}});
   },
 
   // called on extension close or user sign out ? 
   removeEntity: (socket_id) => {
   	console.log("REMOVE START (id)")
-  	db.collection('active_entities').deleteMany({ socket_id: socket_id }, (err, result) => {
+  	db.collection('active_entities').deleteMany({ sock_id: socket_id }, (err, result) => {
   		if (err) { return console.log(err);}
   		console.log("successful removeEntity call on ID: " + socket_id); 
   		console.log("REMOVE END (id)")
@@ -87,12 +98,15 @@ module.exports = {
   },
 
   getEntityInfo: async (socket_id) => {
-    var waiting_user_find_promise = db.collection('active_entities').findOne({ socket_id: socket_id });
-    var entity_info = await waiting_user_find_promise;
-    if (entity_info === null) {
+    var entity_promise = db.collection('active_entities').findOne({ socket_id: socket_id });
+    var entity_resp = await entity_promise;
+    if (entity_resp === null) {
       console.log("getEntityInfo didn't find matching socket_id in DB");
       return null;
     }
+    var entity_info = {};
+    entity_info["website"] = entity_resp["website"];
+    entity_info["entity_type"] = entity_resp["entity_type"];
     return entity_info;
   },
 
@@ -141,7 +155,7 @@ module.exports = {
   	// update the idle helper to be in a chat currently
   	db.collection('active_entities').updateOne({ socket_id: helper_data["socket_id"] }, { $set: {is_chatting: true}} );
   	console.log("HELPER END")
-  	return helper_data["socket_id"];
+  	return helper_data["sock_id"];
   },
 
   // returns object of form:

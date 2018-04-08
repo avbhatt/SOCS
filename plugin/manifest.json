@@ -11,7 +11,7 @@
     "48": "icons/chat-48.ico"
   },
 
-  "permissions": ["storage", "tabs"],
+  "permissions": ["tabs"],
 
   "background": {
     "scripts": ["jquery-3.3.1.js","socket.io.js","background.js"]
