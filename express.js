@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////////////
-////////////////////// Socket.IO functionality  //////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
+////////////////////// Express app functionality  /////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 var express = require('express');
 var bodyParser = require('body-parser'); 
 var cors = require('cors');
@@ -28,7 +28,7 @@ module.exports = {
 		io = require('socket.io')(socketServer);
 
 		// Listen for socket connection on port 3002
-		socketServer.listen(socketPort, function(){
+		socketServer.listen(socketPort, function() {
 			console.log('Socket server listening on *:3002');
 		});
 
@@ -44,37 +44,29 @@ module.exports = {
 				mongo.storeDataSimple("active_entities", new_entity_dict);
 				console.log("JOIN END")
 
-				// TODO: check for waiting users on the same webpage if helper is joining
-					// if (data.type == "Helper") {
-					//  var waiting_user_socket_id = await getWaitingUser(data.website);
-					//  if (waiting_user_socket_id !== null) {
-					//    // have the helper send an initialization message, as in below? 
-					//  }
-					// }
+				// check for waiting users on the same webpage if helper is joining
+				if (data.type == "Helper") {
+					waitingUserCheck(data.website, data.id); 
+				}
 			});			
 
 			// Send message
 			socket.on('message', async function(data) {
 				console.log("MESSAGE START")
 				console.log(data.msg)
-				if (!data.callbackID){
+				if (!data.callbackID) {
 					console.log("First Message");
 					console.log("passed in website is: " + data.website);
-					var helper_id = await mongo.getHelper(data.id, data.website);
+					let helper_id = await mongo.getHelper(data.id, data.website, data.msg);
 					console.log(helper_id);
 
-			        // store msg in db
-			        new_msg = { to: helper_id, from: data.id, message: data.msg, time: get_date() };
-			        mongo.storeData("message_logs", new_msg);
-					io.to(helper_id).emit('message', {msg: data.msg, callbackID: data.id, type: data.type});
-					io.to(data.id).emit('message', {msg: data.msg, callbackID: helper_id, type: data.type});			
+					// if helper_id is null, the user msg was saved in DB and marked as waiting
+					if (helper_id !== null) {
+				        send_msg(helper_id, data.id, data.msg, data.type);			
+					}
 				}
 				else {
-			        // store msg in db 
-			        new_msg = { to: data.callbackID, from: data.id, message: data.msg, time: get_date() };
-			        mongo.storeData("message_logs", new_msg);
-					io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id, type: data.type});
-					io.to(data.id).emit('message', {msg: data.msg, callbackID: data.callbackID, type: data.type});
+					send_msg(data.callbackID, data.id, data.msg, data.type); 
 				}
 				console.log("MESSAGE END")
 			});
@@ -116,9 +108,17 @@ module.exports = {
 		    console.log("received postAnnotation request with body: ");
 		    console.log(req.body);
 		    var ann_json = req.body;
-		    var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], upvotes: 0, downvotes: 0};
+		    var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], ups: 0, downs: 0};
 		    mongo.storeData("annotations", annotation_dict);
 		    console.log("serviced postAnnotation request");
+		});
+
+		app.post('/updateAnnVote', function(req, res) {
+		    console.log("received updateAnnVote request with body: ");
+		    console.log(req.body);
+		    var ann_update_obj = {_id: req.body._id};
+		    mongo.changeAnnVote(_id, req.body.vote); 
+		    console.log("serviced updateAnnVote request");
 		});
 
 		app.get('/getEntityInfo', async function(req, res) {
@@ -135,19 +135,41 @@ module.exports = {
 			}
 		});
 
-		app.post('/updateEntityType', function(req, res) {
+		app.post('/updateEntityType', async function(req, res) {
 		    console.log("received updateEntityType request with body: ");
 		    console.log(req.body);
 		    mongo.updateEntityType(req.body.socket_id, req.body.entity_type);
+
+		    if (req.body.entity_type === "Helper") {
+		    	var entity_info = await mongo.getEntityInfo(req.body.socket_id);
+		    	console.log(entity_info);  
+		    	if (entity_info["is_chatting"] === false) {
+			    	waitingUserCheck(entity_info["website"], req.body.socket_id);
+		    	}
+		    }
 		    console.log("serviced updateEntityType request");
 		});
 
-		app.post('/updateEntityWebsite', function(req, res) {
+		app.post('/updateEntityWebsite', async function(req, res) {
 			console.log("received updateEntityWebsite request with body: ");
 			console.log(req.body);
+			if (req.body.website.indexOf("localhost") !== -1) {
+				console.log('API call');
+				return;
+			} 
 			mongo.updateEntityWebsite(req.body.socket_id, req.body.website);
+
+		    if (req.body.entity_type === "Helper") {
+		    	var entity_info = await mongo.getEntityInfo(req.body.socket_id); 
+		    	console.log(entity_info);
+		    	if (entity_info["is_chatting"] === false) {
+			    	waitingUserCheck(req.body.website, req.body.socket_id);
+		    	}
+		    }
 			console.log("serviced updateEntityWebsite request");
 		});
+
+		// TODO: handle end of conversation
 
 	}
 }
@@ -158,3 +180,24 @@ module.exports = {
 
 // YYYY:MM:DD:HH:MM:SS
 function get_date() { return (new Date()).toJSON().slice(0, 19).replace(/[-T]/g, ':');}
+
+
+function send_msg(to, _from, msg, from_type) {
+	var new_msg = { to: to, from: _from, message: msg, time: get_date() };
+	mongo.storeData("message_logs", new_msg);
+	io.to(to).emit('message', {msg: msg, callbackID: _from, type: from_type});
+	io.to(_from).emit('message', {msg: msg, callbackID: to, type: from_type});			
+}
+
+// called everytime a helper becomes available
+async function waitingUserCheck(website, helper_id) {
+	console.log("entered waitingUserCheck with website: " + website + "and id: " + helper_id);
+	var waiting_user_obj = await mongo.getWaitingUser(website, helper_id);
+	console.log("returned waiting_user_obj is: ");
+	console.log(waiting_user_obj); 
+	if (waiting_user_id !== null) {
+		var waiting_user_id = waiting_user_obj["sock_id"];
+		var waiting_user_msg = waiting_user_obj["waiting_msg"];
+		send_msg(helper_id, waiting_user_id, waiting_user_msg, "User"); 
+	}
+}
