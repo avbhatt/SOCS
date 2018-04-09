@@ -19,7 +19,7 @@ socket.on('connect', () => {
 	$.ajax({
 		url: 'http://localhost:3000/updateEntityType',
 		type:"POST",
-		data: JSON.stringify({"socket_id": socket.id, "entity_type": userData.Type}),
+		data: JSON.stringify({"socket_id": socket.id, "entity_type": userData.type}),
 		contentType:"application/json; charset=utf-8",
 		dataType: "text",
 		success: postInitial
