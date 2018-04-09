@@ -1,5 +1,8 @@
 // Initialize Socket to ServerSocket
-var socket = io('http://localhost:3002');
+const server = 'http://localhost';
+const socketPort = 3002;
+const apiPort = 3000;
+var socket = io(server + ":" + socketPort);
 console.log("BEGIN")
 var userData = {}
 // On Socket Connection
@@ -17,7 +20,7 @@ socket.on('connect', () => {
 	
 	// Update Database with type User
 	$.ajax({
-		url: 'http://localhost:3000/updateEntityType',
+		url: server + ":" + apiPort + '/updateEntityType',
 		type:"POST",
 		data: JSON.stringify({"socket_id": socket.id, "entity_type": userData.type}),
 		contentType:"application/json; charset=utf-8",
@@ -29,7 +32,7 @@ socket.on('connect', () => {
 		console.log("SUCCESS")
 
 		// Check if socket.id has associated website info
-		$.get('http://localhost:3000/getEntityInfo', {socket_id: socket.id}, function(data) {
+		$.get(server + ":" + apiPort + '/getEntityInfo', {socket_id: socket.id}, function(data) {
 			if (data) {
 				var website = data.website;
 				var type = data.entity_type;
@@ -66,7 +69,7 @@ socket.on('connect', () => {
 			if ((tab.url).match(regex)) {
 				userData.website = tab.url;
 				$.ajax({
-					url: 'http://localhost:3000/updateEntityWebsite',
+					url: server + ":" + apiPort + '/updateEntityWebsite',
 					type:"POST",
 					data: JSON.stringify({"socket_id": socket.id, "website": tab.url}),
 					contentType:"application/json; charset=utf-8",
@@ -81,7 +84,7 @@ socket.on('connect', () => {
 		if (request.type == "type_change"){
 			userData.type = request.msg;
 			$.ajax({
-				url: 'http://localhost:3000/updateEntityType',
+				url: server + ":" + apiPort + '/updateEntityType',
 				type: "POST",
 				data: JSON.stringify({"socket_id": socket.id, "entity_type": request.msg}),
 				contentType:"application/json; charset=utf-8",

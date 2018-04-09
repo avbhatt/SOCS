@@ -4,12 +4,13 @@
 const MongoClient = require('mongodb').MongoClient
 var express_startup;
 var db;
+const mongoServer = 'mongodb://server:wah123@ds127044.mlab.com:27044/wah_db'
 
 module.exports = {  
   // server code initializes by making connection to mongo 
   // and initializing socket and server info after connection
   server_init: () => {
-    MongoClient.connect('mongodb://server:wah123@ds127044.mlab.com:27044/wah_db', async (err, client) => {
+    MongoClient.connect(mongoServer, async (err, client) => {
       if (err) { return console.log(err); }
 
       // store global db object
