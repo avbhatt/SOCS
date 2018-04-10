@@ -74,17 +74,23 @@ module.exports = {
 
   // called when an entity changes entity_type
   updateEntityType: (socket_id, type) => {
-    console.log("in mongo.js updateEntityType call with socket_id: " + socket_id + "and type: " + type);
+    console.log("in mongo.js updateEntityType call with socket_id: " + socket_id + " and type: " + type);
   	// change an entity in the mongo collection--either website or type could change
   	db.collection('active_entities').updateOne({ sock_id: socket_id }, { $set: {entity_type: type}});
 
   	// TODO: check for waiting users on same webpage
   },
 
+  // called when chat closed
+  updateEntityStatus: (socket_id, status) => {
+    console.log("in mongo.js updateEntityStatus call with socket_id: " + socket_id + " and isChatting status: " + status);
+    db.collection('active_entities').updateOne({ sock_id: socket_id }, { $set: {is_chatting: status}});
+  },
+
   // called when an entity changes website
   updateEntityWebsite: (socket_id, website) => {
   	// change an entity in the mongo collection--either website or type could change
-    console.log("in mongo.js updateEntityType call with socket_id: " + socket_id + "and website: " + website);
+    console.log("in mongo.js updateEntityType call with socket_id: " + socket_id + " and website: " + website);
   	db.collection('active_entities').updateOne({ sock_id: socket_id }, { $set: {website: website}});
   },
 

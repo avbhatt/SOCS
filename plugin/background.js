@@ -106,6 +106,18 @@ socket.on('connect', () => {
 				}
 			}
 		}
+		else if (request.type == "close") {
+			console.log("CLOSE")
+			userData.callbackID = null;
+			socket.emit('close', {id: socket.id});
+			if (userData.type == "Helper"){
+				console.log("Annotation submissions");
+				sendResponse("Annotate me please");
+			}
+			else {
+				sendResponse("Successful Close")
+			}
+		}
 	}
 	
 	browser.tabs.onUpdated.addListener(websiteUpdate);
