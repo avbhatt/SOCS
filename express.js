@@ -182,7 +182,6 @@ module.exports = {
 // YYYY:MM:DD:HH:MM:SS
 function get_date() { return (new Date()).toJSON().slice(0, 19).replace(/[-T]/g, ':');}
 
-
 function send_msg(to, _from, msg, from_type) {
 	var new_msg = { to: to, from: _from, message: msg, time: get_date() };
 	mongo.storeData("message_logs", new_msg);
