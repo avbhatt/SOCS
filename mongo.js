@@ -85,6 +85,12 @@ module.exports = {
 		db.collection('active_entities').updateOne({ sock_id: socket_id }, { $set: {website: website, is_waiting: false}});
 	},
 
+	// called when chat closed
+	updateEntityStatus: (socket_id, status) => {
+		console.log("in mongo.js updateEntityStatus call with socket_id: " + socket_id + " and isChatting status: " + status);
+		db.collection('active_entities').updateOne({ sock_id: socket_id }, { $set: {is_chatting: status}});
+	},
+	
 	updateAnnVote: (_id, vote_type) => {
 		var inc_obj = {};
 		if (vote_type === "up") {

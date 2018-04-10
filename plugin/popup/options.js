@@ -1,5 +1,5 @@
 $(function() {
-	console.log("OPTION")
+	console.log("OPTION");
 	$("#profile-select").change(function () {
 		var type = $(this).val();
 		console.log(type);

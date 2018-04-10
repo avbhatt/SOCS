@@ -6,11 +6,19 @@
     <link rel="stylesheet" href="sidebar.css">
   </head>
   <body>
+    <div id="user" style="">
+      <button id="help">I Need Help</button>
+    </div>
+    <div id="helper" style="display:none;">
+      <button>No users need help. Good work!</button>
+    </div>
+    <div id="input"  id="input" style="display:none;">
       <ul id="messages"></ul>
-      <form action="">
-        <input id="m" autocomplete="off" aria-label="Type a message" placeholder="Type a message"/>
-        <button>Send message</button>
+      <form action="" accept-charset=utf-8>
+        <input id="m" autocomplete="off" placeholder="Send a message"/><button id="send">Send</button>
       </form>
+      <button id="close">Close</button>
+    </div>
     <div id="annotation-wrapper">
       <h2>Annotations for this page</h2>
       <div class="test-content">

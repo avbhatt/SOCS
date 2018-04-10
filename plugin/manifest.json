@@ -4,7 +4,7 @@
   "name": "WebAccessibilityHelper",
   "version": "1.0",
 
-  "description": "Adds a red border to all webpages matching mozilla.org.",
+  "description": "Live chat to aid users facing accessibility problems",
 
   "icons": {
     "32": "icons/chat-32.ico",

@@ -78,6 +78,13 @@ module.exports = {
 				socket.leave(socket.id);
 				mongo.removeEntity(socket.id);
 				console.log("DISCONNECT END");
+			});
+
+			socket.on('close', function(data) {
+				console.log("LEAVE START");
+				console.log(socket.id);
+				mongo.updateEntityStatus(socket.id, false);
+				console.log("LEAVE END");
 			})
 		});
 	},

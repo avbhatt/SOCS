@@ -1,4 +1,6 @@
 body { font-size: 14px Helvetica, Arial, sans-serif; padding: 10px;}
+button { width: 40%; background: #4ed2dd; border: none; padding: 10px; text-align: center}
+button:hover, button:focus { background: #2db2bd; cursor: pointer}
 form input { border: 1px #ddd solid; padding: 10px; width: 100%; margin: 4px 0px;}
 form button { width: 40%; background: #4ed2dd; border: none; padding: 10px; text-align: center}
 form button:hover, form button:focus { background: #2db2bd; cursor: pointer}

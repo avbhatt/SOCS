@@ -90,6 +90,9 @@ socket.on('connect', () => {
 				contentType:"application/json; charset=utf-8",
 				dataType: "text"
 			});
+			browser.runtime.sendMessage({type: "chat_view", msg: request.msg}, function(response) {
+				console.log(response.msg);
+			});
 			sendResponse("User Type Changed");
 		}
 		else if (request.type == "message_send") {
@@ -109,6 +112,18 @@ socket.on('connect', () => {
 			sendResponse(userData.type);
 			console.log(userData.type);
 			// console.log("Popup check requested, sending response");
+		}
+		else if (request.type == "close") {
+			console.log("CLOSE")
+			userData.callbackID = null;
+			socket.emit('close', {id: socket.id});
+			if (userData.type == "Helper"){
+				console.log("Annotation submissions");
+				sendResponse("Annotate me please");
+			}
+			else {
+				sendResponse("Successful Close")
+			}
 		}
 	}
 
