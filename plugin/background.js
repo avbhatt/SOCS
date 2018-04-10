@@ -90,6 +90,9 @@ socket.on('connect', () => {
 				contentType:"application/json; charset=utf-8",
 				dataType: "text"
 			});
+			browser.runtime.sendMessage({type: "chat_view", msg: request.msg}, function(response) {
+				console.log(response.msg);
+			});
 			sendResponse("User Type Changed");
 		}
 		else if (request.type == "message_send") {
