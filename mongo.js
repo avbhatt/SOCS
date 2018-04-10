@@ -4,8 +4,9 @@
 const MongoClient = require('mongodb').MongoClient
 var express_startup;
 var db;
+const mongoServer = 'mongodb://server:wah123@ds127044.mlab.com:27044/wah_db'
 
-module.exports = {  
+module.exports = {
 	// server code initializes by making connection to mongo 
 	// and initializing socket and server info after connection
 	server_init: () => {

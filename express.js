@@ -153,15 +153,16 @@ module.exports = {
 		app.post('/updateEntityWebsite', async function(req, res) {
 			console.log("received updateEntityWebsite request with body: ");
 			console.log(req.body);
+			console.log("the website in this updateEntityWebsite req is: ");
+			console.log(req.body.website); 
 			if (req.body.website.indexOf("localhost") !== -1) {
 				console.log('API call');
 				return;
 			} 
 			mongo.updateEntityWebsite(req.body.socket_id, req.body.website);
-
-		    if (req.body.entity_type === "Helper") {
-		    	var entity_info = await mongo.getEntityInfo(req.body.socket_id); 
-		    	console.log(entity_info);
+	    	var entity_info = await mongo.getEntityInfo(req.body.socket_id); 
+	    	console.log(entity_info);
+		    if (entity_info["entity_type"] === "Helper") {
 		    	if (entity_info["is_chatting"] === false) {
 			    	waitingUserCheck(req.body.website, req.body.socket_id);
 		    	}
