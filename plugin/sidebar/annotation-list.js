@@ -27,8 +27,9 @@ function createList (texts) {
   texts.forEach(function (content) {
     var $annotationItem = $("<li></li>").text(content.text);
     $annotationItem.append($("<br aria-hidden='true'>"));
-    $annotationItem.append($("<a href='#'>" + content.ups + "[upvote]</a>"));
-    $annotationItem.append($("<a href='#'>" + content.downs + "[downvote]</a>"));
+    $annotationItem.append($("<a href='#' aria-label='" + content.ups + "upvotes'>" + content.ups + "↑</a>"));
+    $annotationItem.append("&nbsp;");
+    $annotationItem.append($("<a href='#' aria-label='" + content.downs + "downvotes'>" + content.downs + "↓</a>"));
     $temp_ul.append($annotationItem);
   })
   return $temp_ul
@@ -42,7 +43,7 @@ $(function () {
     dataType: "json",
     async: false,
     success: function(data) {
-      console.log(data); 
+      console.log(data);
       var tempResponse = data.content;
       console.log(tempResponse);
       console.log(tempResponse[0])
