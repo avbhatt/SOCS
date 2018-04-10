@@ -40,6 +40,12 @@ function refetchWebsite(tabId, changeInfo, tab){
   if (changeInfo.status == 'complete' && !((tab.url).includes("moz-extension://"))) {
     // console.log("ChangeWebsite");
     // console.log(tab.url)
+    $("#img").next().empty();
+    $("#keyb").next().empty();
+    $("#vid").next().empty();
+    $('#img').css("display", "none");
+    $('#keyb').css("display", "none");
+    $('#vid').css("display", "none");
     console.log("inside changeinfo");
     if ((tab.url).match(regex)) {
       console.log("inside taburl");
