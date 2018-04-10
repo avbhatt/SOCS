@@ -195,7 +195,7 @@ async function waitingUserCheck(website, helper_id) {
 	var waiting_user_obj = await mongo.getWaitingUser(website, helper_id);
 	console.log("returned waiting_user_obj is: ");
 	console.log(waiting_user_obj); 
-	if (waiting_user_id !== null) {
+	if (waiting_user_obj !== null) {
 		var waiting_user_id = waiting_user_obj["sock_id"];
 		var waiting_user_msg = waiting_user_obj["waiting_msg"];
 		send_msg(helper_id, waiting_user_id, waiting_user_msg, "User"); 
