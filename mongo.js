@@ -195,6 +195,6 @@ module.exports = {
         return b_overall - a_overall;
       })
     });
-    return return_obj;
+    return {"content":return_obj};
   },
 }
