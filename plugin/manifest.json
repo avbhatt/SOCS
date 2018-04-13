@@ -11,7 +11,7 @@
     "48": "icons/chat-48.ico"
   },
 
-  "permissions": ["tabs"],
+  "permissions": ["tabs", "storage"],
 
   "background": {
     "scripts": ["jquery-3.3.1.js","socket.io.js","background.js"]
@@ -27,6 +27,13 @@
     "default_icon": "icons/chat-48.ico",
     "default_title": "Web Accessibility Chat",
     "default_panel": "sidebar/sidebar.html"
-  }
+  },
+
+  "content_scripts": [
+    {
+      "matches":["<all_urls>"],
+      "js":["jquery-3.3.1.js", "annotation-form.js"]
+    }
+  ]
 
 }

@@ -56,3 +56,8 @@ form button:hover, form button:focus { background: #2db2bd; cursor: pointer}
 h2 {
   margin-top: 30px;
 }
+
+#open-annotate {
+  width: 100%;
+  margin-top: 20px;
+}
