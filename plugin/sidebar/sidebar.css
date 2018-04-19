@@ -1,8 +1,9 @@
-body { font-size: 14px Helvetica, Arial, sans-serif; padding: 10px;}
-button { width: 40%; background: #4ed2dd; border: none; padding: 10px; text-align: center}
+body { font-size: 16px; font-family: "Helvetica", "Arial", sans-serif; padding: 10px;}
+
+button {font-size: 14px; width: 40%; background: #4ed2dd; border: none; padding: 10px; text-align: center; font-weight: bold;}
 button:hover, button:focus { background: #2db2bd; cursor: pointer}
-form input { border: 1px #ddd solid; padding: 10px; width: 100%; margin: 4px 0px;}
-form button { width: 40%; background: #4ed2dd; border: none; padding: 10px; text-align: center}
+form input {font-size: 14px; height: 30px; border: 1px #ddd solid; padding: 10px; width: 100%; margin: 4px 0px;}
+form button { width: 40%; background: #4ed2dd; border: none; text-align: center}
 form button:hover, form button:focus { background: #2db2bd; cursor: pointer}
 #messages { list-style-type: none; margin: 0; padding: 0; }
 #messages li { padding: 5px 10px; }
@@ -33,4 +34,25 @@ form button:hover, form button:focus { background: #2db2bd; cursor: pointer}
 
 .content ul {
   padding-left: 10px;
+}
+
+#close {
+  background-color: #d09090;
+  width: 55%;
+  float: right;
+  padding: 10px;
+
+}
+
+#help {
+  width: 50%;
+}
+
+#close:hover,
+#close:focus {
+  background-color: #c07070;
+}
+
+h2 {
+  margin-top: 30px;
 }
