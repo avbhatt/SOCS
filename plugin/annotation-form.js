@@ -1,5 +1,9 @@
-var cancel
-var submit
+var cancel;
+var submit;
+var website = window.location.href;
+const server = 'http://localhost';
+const apiPort = 3000;
+
 
 browser.runtime.onMessage.addListener(function(request) {
   if (request.msg == "submit_annotation") {
@@ -20,12 +24,11 @@ browser.runtime.onMessage.addListener(function(request) {
           <option value="image-annotations">Image Annotations</option>
           <option value="video-annotations">Video Annotations</option>
           <option value="keyboard-annotations">Keyboard Annotations</option>
-        </select><br />
-        <!-- <input type="text" id="annotation-category" name="annotation-category"/><br /> -->
-        <label for="annotation-title">Title: </label>
-        <input type="text" id="annotation-title" name="annotation-title"/><br />
+        </select>
+        <!-- or <input type="text" id="annotation-category" name="custom-category" placeholder="Custom category name"/> -->
+        <br />
         <label for="annotation-text">Annotation Text: </label><br />
-        <textarea id="annotation-text" name="annotation-text" rows="5" style="width:100%; max-width:100%"></textarea><br />
+        <textarea id="annotation-text" name="annotation-text" rows="5" style="width:100%; max-width:100%" required></textarea><br />
         <button type="submit" class="annotation-btn" id="annotation-submit">Submit</button>
         <button type="button" class="annotation-btn" id="annotation-cancel">Cancel</button>
       </div>
@@ -49,5 +52,19 @@ browser.runtime.onMessage.addListener(function(request) {
         $('#annotation-form-div').remove();
       }
     }
+
+    $("#annotation-form").on("submit", function(e){
+      e.preventDefault()
+      var category = document.getElementById("annotation-category").value;
+      var text = document.getElementById("annotation-text").value;
+      console.log("in annotation-form submit")
+      $.ajax({
+        url: server + ":" + apiPort + '/postAnnotation',
+        type:"POST",
+        data: JSON.stringify({"website": website, "category": category, "text": text}),
+        contentType:"application/json; charset=utf-8",
+        dataType: "text",
+      });
+    })
   }
 });
