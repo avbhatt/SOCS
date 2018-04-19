@@ -95,6 +95,16 @@ socket.on('connect', () => {
 			});
 			sendResponse("User Type Changed");
 		}
+		else if (request.type == "clicked_submit") {
+			msg = JSON.parse(request.msg)
+			$.ajax({
+				url: server + ":" + apiPort + '/postAnnotation',
+				type: "POST",
+				data: JSON.stringify({"website": msg["website"], "category": msg["category"], "text": msg["text"]}),
+				contentType:"application/json; charset=utf-8",
+				dataType: "text"
+			});
+		}
 		else if (request.type == "message_send") {
 			if (userData.website) {
 				if (userData.callbackID) {

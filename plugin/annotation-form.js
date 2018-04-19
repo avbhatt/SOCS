@@ -1,6 +1,6 @@
 var cancel;
 var submit;
-var website = window.location.href;
+const website = window.location.href;
 const server = 'http://localhost';
 const apiPort = 3000;
 
@@ -16,7 +16,7 @@ browser.runtime.onMessage.addListener(function(request) {
     div.id = 'annotation-form-div'
     var form =
     `
-    <form id="annotation-form">
+    <form id="annotation-form" method="post">
       <h2>Submit an Annotation</h2>
       <div id="annotation-form-content">
         <label for="annotation-category">Category: </label>
@@ -53,18 +53,13 @@ browser.runtime.onMessage.addListener(function(request) {
       }
     }
 
-    $("#annotation-form").on("submit", function(e){
-      e.preventDefault()
+    $("#annotation-form").on("submit", function(){
       var category = document.getElementById("annotation-category").value;
       var text = document.getElementById("annotation-text").value;
       console.log("in annotation-form submit")
-      $.ajax({
-        url: server + ":" + apiPort + '/postAnnotation',
-        type:"POST",
-        data: JSON.stringify({"website": website, "category": category, "text": text}),
-        contentType:"application/json; charset=utf-8",
-        dataType: "text",
-      });
+      browser.runtime.sendMessage({type: "clicked_submit", msg: JSON.stringify({"website": website, "category": category, "text": text})}, function(response) {
+    		console.log(response.msg);
+    	});
     })
   }
 });
