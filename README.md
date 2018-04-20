@@ -37,7 +37,7 @@ Adit Bhatt, Angelina Fahs, Christina Liu, Ian McKenzie
 ## Architecture
 ### Server
 #### `index.js`
-- Starts `mongo` connection by loading `mongo.js` file 
+- Starts `mongo` connection by loading `mongo.js` file
 #### `mongo.js`
 - Exports functions:
   - `server_init`
@@ -124,9 +124,12 @@ The bulk of the work is done in this script.
     - Used when send is clicked in chat interface
   - `check_popup`
     - Respond with current entity  type
+  - `annotation_submitted`
+    - Used when annotation form is submitted
   - `close`
     - Trigger annotation submission
 - Handles `socket.io` `message` by sending extension message to `chat`
+- Handles annotation submissions by `POST` to `/postAnnotations` with annotation content
 
 #### `popup/options.[js,css,html]`
 Dropdown for changing between user and helper. Sends updated type to `background` in message.
@@ -141,6 +144,11 @@ Updates UI with these annotations
 #### `sidebar/sidebar.[css,html]`
 Creates buttons, divs, lists needed for chat and annotation interface. In-line style used to change display types dynamically.
 
+#### `sidebar/submit_annotation.js`
+Handles the annotation submission form by sending message to `annotation-form.js` upon clicking the submit annotation button.
+
+#### `annotation-form.js`
+Content script that creates the annotation submission form as a modal. Sends the annotation content to `background` in message.
 
 ## Resources
 [Browser Extensions](https://developer.mozilla.org/en-US/Add-ons/WebExtensions)
