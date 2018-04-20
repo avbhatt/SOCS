@@ -19,8 +19,7 @@ Adit Bhatt, Angelina Fahs, Christina Liu, Ian McKenzie
 2. Navigate to the root folder `SOCS`
 3. To set up the npm dependencies, type `npm install` from the root directory
   - Confirm that all packages from `package.json` were installed correctly
-4. Run the node server
-  - `node index.js`
+4. Run the node server with `node index.js`
 5. Navigate to the `plugin` folder within `SOCS`
 6. Begin two instances of the Firefox Developer Edition using `web-ext`
   - `web-ext run --firefox="/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox-bin"`
@@ -138,8 +137,7 @@ Handles message input by sending message to `background` dealing with message co
 
 Receives messages from `background` with message replies and updates UI to display.
 #### `sidebar/annotation-list.js`
-Fetches annotations for a website on website updates via `GET` request to `/getAnnotations`
-Updates UI with these annotations
+Fetches annotations for a website on website updates via `GET` request to `/getAnnotations` and updates the sidebar with these annotations
 
 #### `sidebar/sidebar.[css,html]`
 Creates buttons, divs, lists needed for chat and annotation interface. In-line style used to change display types dynamically.
@@ -160,7 +158,7 @@ Content script that creates the annotation submission form as a modal. Sends the
 ## Database Info
 - DB name: wah_db
 - Username: ianphilm
-- Password:
+- Password: socs123
 - URI: [mongodb://server:wah123@ds127044.mlab.com:27044/wah_db](https://mlab.com/databases/wah_db/collections/)
 - Documents
   - `active_entities`
