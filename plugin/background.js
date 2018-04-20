@@ -95,7 +95,7 @@ socket.on('connect', () => {
 			});
 			sendResponse("User Type Changed");
 		}
-		else if (request.type == "clicked_submit") {
+		else if (request.type == "annotation_submitted") {
 			msg = JSON.parse(request.msg)
 			$.ajax({
 				url: server + ":" + apiPort + '/postAnnotation',

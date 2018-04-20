@@ -57,7 +57,7 @@ browser.runtime.onMessage.addListener(function(request) {
       var category = document.getElementById("annotation-category").value;
       var text = document.getElementById("annotation-text").value;
       console.log("in annotation-form submit")
-      browser.runtime.sendMessage({type: "clicked_submit", msg: JSON.stringify({"website": website, "category": category, "text": text})}, function(response) {
+      browser.runtime.sendMessage({type: "annotation_submitted", msg: JSON.stringify({"website": website, "category": category, "text": text})}, function(response) {
     		console.log(response.msg);
     	});
     })
