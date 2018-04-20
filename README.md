@@ -21,7 +21,7 @@ Adit Bhatt, Angelina Fahs, Christina Liu, Ian McKenzie
   - Confirm that all packages from `package.json` were installed correctly
 4. Run the node server
   - `node index.js`
-5. Run navigate to the `plugin` folder within `SOCS`
+5. Navigate to the `plugin` folder within `SOCS`
 6. Begin two instances of the Firefox Developer Edition using `web-ext`
   - `web-ext run --firefox="/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox-bin"`
     - The value for option `--firefox` will change depending on where Firefox Developer Edition is installed
