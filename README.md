@@ -159,7 +159,6 @@ Content script that creates the annotation submission form as a modal. Sends the
 ## Database Info
 - DB name: wah_db
 - Username: ianphilm
-- Password: socs123
 - URI: [mongodb://server:wah123@ds127044.mlab.com:27044/wah_db](https://mlab.com/databases/wah_db/collections/)
 - Documents
   - `active_entities`
