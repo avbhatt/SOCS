@@ -29,6 +29,7 @@ Adit Bhatt, Angelina Fahs, Christina Liu, Ian McKenzie
 7. Change one browser to helper view via the popup
 8. Navigate both browsers to the same website
   - Static webpages such as Wikipedia articles work better
+  - Our extension does not work on browser pages that are not websites (the new tab page, setting pages, etc.)
 9. Hit *I Need Help* on the User view
   - This should begin a chat with the waiting helper by sending a default message
 10. Chat
