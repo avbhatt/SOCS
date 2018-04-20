@@ -2,11 +2,11 @@
 ////////////////////// Socket.IO functionality  //////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 var express = require('express');
-var bodyParser = require('body-parser'); 
+var bodyParser = require('body-parser');
 var cors = require('cors');
 var mongo = require('./mongo');
 
-// global server/socket.io vars 
+// global server/socket.io vars
 var socketServer;
 var http_server;
 var io;
@@ -16,7 +16,7 @@ var app = express();
 app.use(cors()); // Enable CORS
 app.use(bodyParser.json());
 
-// ports for testing 
+// ports for testing
 const socketPort = 3002;
 const serverPort = 3000;
 
@@ -48,10 +48,10 @@ module.exports = {
 					// if (data.type == "Helper") {
 					//  var waiting_user_socket_id = await getWaitingUser(data.website);
 					//  if (waiting_user_socket_id !== null) {
-					//    // have the helper send an initialization message, as in below? 
+					//    // have the helper send an initialization message, as in below?
 					//  }
 					// }
-			});			
+			});
 
 			// Send message
 			socket.on('message', async function(data) {
@@ -67,10 +67,10 @@ module.exports = {
 			        new_msg = { to: helper_id, from: data.id, message: data.msg, time: get_date() };
 			        mongo.storeData("message_logs", new_msg);
 					io.to(helper_id).emit('message', {msg: data.msg, callbackID: data.id, type: data.type});
-					io.to(data.id).emit('message', {msg: data.msg, callbackID: helper_id, type: data.type});			
+					io.to(data.id).emit('message', {msg: data.msg, callbackID: helper_id, type: data.type});
 				}
 				else {
-			        // store msg in db 
+			        // store msg in db
 			        new_msg = { to: data.callbackID, from: data.id, message: data.msg, time: get_date() };
 			        mongo.storeData("message_logs", new_msg);
 					io.to(data.callbackID).emit('message', {msg: data.msg, callbackID: data.id, type: data.type});
@@ -97,7 +97,7 @@ module.exports = {
 		});
 	},
 
-	// Create HTTP server for node application 
+	// Create HTTP server for node application
 	init_http_server: () => {
 		http_server = require('http').Server(app);
 
@@ -113,7 +113,7 @@ module.exports = {
 		app.get('/getAnnotations', async function(req, res) {
 		    console.log("received getEntityInfo request for website: ");
 		    console.log(req.query.website);
-		    var ann_obj = await mongo.getWebsiteAnnotations(req.query.website); 
+		    var ann_obj = await mongo.getWebsiteAnnotations(req.query.website);
 		    res.send(ann_obj);
 		    console.log("serviced getAnnotations request with response: ");
 		    console.log(ann_obj);
@@ -123,7 +123,7 @@ module.exports = {
 		    console.log("received postAnnotation request with body: ");
 		    console.log(req.body);
 		    var ann_json = req.body;
-		    var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], upvotes: 0, downvotes: 0};
+		    var annotation_dict = {website: ann_json["website"], category: ann_json["category"], text: ann_json["text"], ups: 0, downs: 0};
 		    mongo.storeData("annotations", annotation_dict);
 		    console.log("serviced postAnnotation request");
 		});
@@ -131,7 +131,7 @@ module.exports = {
 		app.get('/getEntityInfo', async function(req, res) {
 			console.log("received getEntityInfo request with socket_id: ");
 			console.log(req.query.socket_id);
-			var entity_info = await mongo.getEntityInfo(req.query.socket_id); 
+			var entity_info = await mongo.getEntityInfo(req.query.socket_id);
 			console.log("serviced getEntityInfo request with response: ");
 			console.log(entity_info);
 			if (entity_info){

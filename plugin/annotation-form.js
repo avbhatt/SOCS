@@ -21,9 +21,9 @@ browser.runtime.onMessage.addListener(function(request) {
       <div id="annotation-form-content">
         <label for="annotation-category">Category: </label>
         <select id="annotation-category">
-          <option value="image-annotations">Image Annotations</option>
-          <option value="video-annotations">Video Annotations</option>
-          <option value="keyboard-annotations">Keyboard Annotations</option>
+          <option value="image">Image Annotations</option>
+          <option value="video">Video Annotations</option>
+          <option value="keyboard">Keyboard Annotations</option>
         </select>
         <!-- or <input type="text" id="annotation-category" name="custom-category" placeholder="Custom category name"/> -->
         <br />
